@@ -11,6 +11,30 @@ body {
     max-width: 500px;
     margin: 40px auto;
 }
+.header {
+    padding: 20px;
+    background: #f2f2f2;
+    margin-bottom: 2rem;
+}
+.header__container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.header__logo {
+    text-decoration: none;
+    font-weight: bold;
+    color: #19ad8f;
+}
+.nav-auth {
+    display: flex;
+    gap: 5px;
+}
+.nav-auth__link {
+    color: #19ad8f;
+}
 .title {
     font-size: 2em;
     text-align: center;
