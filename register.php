@@ -10,7 +10,7 @@
     $confirmPassword = $_POST['confirmPassword'] ?? null;
     $errors = [];
 
-    if(isset($_POST["action"]) && $_POST["action"] == "send") {
+    if(isSend()) {
         if(empty($name)) {
             $errors['name'] = "Имя обязательно";
         }

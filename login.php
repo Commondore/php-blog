@@ -4,12 +4,38 @@ require_once __DIR__ .'/helpers/helpers.php';
 
 $email = $_POST["email"] ?? null;
 $password = $_POST["password"] ?? null;
+$errors = [];
 
-if(isset($_POST['action']) && $_POST['action'] == 'send') {
+if(isSend()) {
+    if(empty($email)) {
+        $errors['email'] = 'Поле email не должно быть пустым';
+    }
+    if(empty($password)) {
+        $errors['password'] = 'Поле password не должно быть пустым';
+    }
 
+    $conn = getConnect();
+    $sql = 'SELECT * FROM users WHERE email = :email';
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([':email' => $email]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    if(!$user) {
+        $errors['email'] = 'Такого email не существует';
+    } else {
+        if(password_verify($password, $user['password'])) {
+            session_set_cookie_params(3600);
+            session_start();
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['name'];
+            header('Location: index.php');
+        } else {
+            $errors['password'] = 'Неверный пароль';
+        }
+
+    }
 }
 
-$conn = getConnect();
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -28,9 +54,11 @@ $conn = getConnect();
             <input type="hidden" name="action" value="send">
             <div class="form-group">
                 <input type="email" name="email" placeholder="Укажите email">
+                <?php getErrorMessage($errors, 'email'); ?>
             </div>
             <div class="form-group">
                 <input type="password" name="password" placeholder="Укажите пароль">
+                <?php getErrorMessage($errors, 'password'); ?>
             </div>
             <div class="form-group">
                 <button type="submit">Войти</button>
